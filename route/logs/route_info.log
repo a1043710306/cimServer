@@ -1,0 +1,6 @@
+2020-03-19 15:45:43.059 [main] INFO  com.luz.route.RouteApplicationTests - Starting RouteApplicationTests on DESKTOP-1D721DH with PID 13376 (started by Sweet in C:\cimServer\route)
+2020-03-19 15:45:43.061 [main] INFO  com.luz.route.RouteApplicationTests - No active profile set, falling back to default profiles: default
+2020-03-19 15:45:45.437 [main] INFO  o.s.scheduling.concurrent.ThreadPoolTaskExecutor - Initializing ExecutorService
+2020-03-19 15:45:45.476 [main] INFO  o.s.scheduling.concurrent.ThreadPoolTaskExecutor - Initializing ExecutorService 'taskExecutor'
+2020-03-19 15:45:47.519 [main] INFO  com.luz.route.RouteApplicationTests - Started RouteApplicationTests in 5.368 seconds (JVM running for 7.439)
+2020-03-19 15:45:48.100 [SpringContextShutdownHook] INFO  o.s.scheduling.concurrent.ThreadPoolTaskExecutor - Shutting down ExecutorService 'taskExecutor'

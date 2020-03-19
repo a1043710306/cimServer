@@ -1,0 +1,48 @@
+
+server:
+  port: 8088
+
+spring:
+  datasource:
+  username: root
+  password: root
+  url: jdbc:mysql://192.168.1.180:3306/cms_xz?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+  driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    cache.clusterNodes: 192.168.1.180:7001,192.168.1.180:7000,192.168.1.180:7002,192.168.1.180:7003,192.168.1.180:7004,192.168.1.180:7005
+    #cache.clusterNodes: 10.20.10.30:6300,10.20.10.33:6301,10.20.10.31:6300,10.20.10.34:6301,10.20.10.32:6300,10.20.10.35:6301
+    cache.commandTimeout: 5000
+
+
+
+
+
+
+zk:
+  root: /route
+  connection: 192.168.1.15:2181
+  iszk: true
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.luz.route.entity
+
+logging:
+  config: classpath:logback-spring.xml
+  path: .\logs
+  level:
+    com:
+      example:
+        mapper: debug
+
+defaultRedis: 127.0.0.1
+
+ip: "127.0.0.1:192.168.1.15,"
+
+async:
+  executor:
+    thread:
+      core_pool_size : 10
+      max_pool_size : 50
+      queue_capacity : 2000
+      keep_alive_seconds : 300

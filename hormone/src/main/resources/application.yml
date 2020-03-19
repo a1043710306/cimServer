@@ -1,0 +1,39 @@
+
+
+
+#data source
+spring:
+  profiles:
+    active: dev
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.luz.hormone.model
+
+logging:
+  config: classpath:logback-spring.xml
+  path: .\logs
+  level:
+    com:
+      example:
+        mapper: debug
+server:
+  port: 8081
+mynetty:
+  port: 8889
+  heart: 10
+
+defaultRedis: 127.0.0.1:6379
+
+#线程池
+async:
+  executor:
+    thread:
+      core_pool_size : 10
+      max_pool_size : 50
+      queue_capacity : 2000
+      keep_alive_seconds : 300
+
+route:
+  port: 8088
+  url: 127.0.0.1

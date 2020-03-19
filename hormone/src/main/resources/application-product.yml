@@ -1,0 +1,25 @@
+
+spring:
+  datasource:
+  username: hotoday_w
+  password: 4abf96b9c9658696053e61cec66775e6
+  url: jdbc:mysql://10.20.10.204:3306/hotoday?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    cache.clusterNodes: 10.20.10.30:6300,10.20.10.33:6301,10.20.10.31:6300,10.20.10.34:6301,10.20.10.32:6300,10.20.10.35:6301
+    cache.commandTimeout: 5000
+
+
+
+#showSql
+logging:
+  level:
+    com:
+      example:
+        mapper: debug
+
+
+zk:
+  root: /route
+  connection: 10.20.10.22:9092
+  iszk: true
