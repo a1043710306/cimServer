@@ -1,6 +1,7 @@
 package com.luz.hormone.handler;
 
 import com.luz.hormone.netty.NettyServer;
+import com.luz.hormone.netty.WebSocketServer;
 import com.luz.hormone.service.UserConfigService;
 import com.luz.hormone.utils.ChannelUtil;
 import com.luz.hormone.utils.NettyAttrUtil;
@@ -21,15 +22,33 @@ public class ServerHeartBeatHandler {
     UserConfigService userConfigService;
     @Autowired
     NettyServer nettyServer;
+    @Autowired
+    WebSocketServer webSocketServer;
     public void process(ChannelHandlerContext ctx){
         if (NettyAttrUtil.checkHeart(ctx)){
+            return;
         }
         //心跳超时  清理存储关系
-        int userId=ChannelUtil.getUserId(ctx);
-        ChannelUtil.removeChannelInfo(ctx);
-        userConfigService.delRoute(userId);
-        LOGGER.info(userId+" 心跳超时,关闭连接");
-        nettyServer.closeChannel(userId);
+        if (ChannelUtil.getUserId_Web(ctx)!=0){
+            try {
+                webSocketServer.closeChannel(ChannelUtil.getUserId_Web(ctx));
+            }catch (Exception e){
+                e.printStackTrace();
+                ctx.channel().close();
+            }
+            userConfigService.delRoute(ChannelUtil.getUserId_Web(ctx));
+        }else {
+            int userId=ChannelUtil.getUserId(ctx);
+            try {
+                nettyServer.closeChannel(userId);
+            }catch (Exception e){
+                e.printStackTrace();
+                ctx.channel().close();
+            }
+            userConfigService.delRoute(userId);
+        }
+
+        LOGGER.info(ctx.name()+" 心跳超时,关闭连接");
     }
 
     public int getHeart() {

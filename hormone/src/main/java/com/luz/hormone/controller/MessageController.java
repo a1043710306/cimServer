@@ -5,10 +5,12 @@ import com.luz.hormone.dataPackage.DataPackage;
 import com.luz.hormone.entity.SendReqEntity;
 import com.luz.hormone.entity.SendRespEntity;
 import com.luz.hormone.netty.NettyServer;
+import com.luz.hormone.netty.WebSocketServer;
 import com.luz.hormone.service.OfflinePushService;
 import com.luz.hormone.service.UserConfigService;
 import com.luz.hormone.utils.ChannelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -18,6 +20,8 @@ public class MessageController {
     private OfflinePushService offlinePushService;
     @Autowired
     private NettyServer nettyServer;
+    @Autowired
+    private WebSocketServer webSocketServer;
     @Autowired
     private UserConfigService userConfigService;
 
@@ -31,7 +35,11 @@ public class MessageController {
     public SendRespEntity sendMsg(@RequestBody SendReqEntity sendReqEntity){
         SendRespEntity sendRespEntity=new SendRespEntity();
         try{
-            nettyServer.sendMsg(sendReqEntity.getUserId(),sendReqEntity.getData());
+            if(ChannelUtil.getChannel(sendReqEntity.getUserId())!=null) {
+                nettyServer.sendMsg(sendReqEntity.getUserId(), sendReqEntity.getData());
+            }else {
+                webSocketServer.sendMsg(sendReqEntity.getUserId(),sendReqEntity.getData());
+            }
         }catch (Exception e){
 
             offlinePushService.saveOfflineMSG(sendReqEntity.getUserId(),sendReqEntity.getData());
@@ -52,8 +60,8 @@ public class MessageController {
         SendRespEntity sendRespEntity=new SendRespEntity();
         String data=sendReqEntity.getData();
         int cmd=sendReqEntity.getCmd();
-        DataPackage msg=new DataPackage(data.getBytes().length,data.getBytes());
-        msg.setCommand(cmd);
+        DataPackage msg=new DataPackage(data.getBytes().length,data);
+        msg.setCmd(cmd);
         msg.setCode(sendReqEntity.getCode());
         try{
             nettyServer.sendMsg(sendReqEntity.getUserId(),msg);

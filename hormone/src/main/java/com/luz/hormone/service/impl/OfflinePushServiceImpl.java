@@ -1,16 +1,22 @@
 package com.luz.hormone.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.luz.hormone.constant.Constant;
 import com.luz.hormone.dao.OfflinePushDB;
+import com.luz.hormone.dao.UserInfoMapper;
 import com.luz.hormone.dataPackage.DataPackage;
+import com.luz.hormone.model.UserModel;
 import com.luz.hormone.netty.NettyServer;
+import com.luz.hormone.netty.WebSocketServer;
 import com.luz.hormone.service.OfflinePushService;
+import com.luz.hormone.utils.ChannelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class OfflinePushServiceImpl implements OfflinePushService {
@@ -18,6 +24,12 @@ public class OfflinePushServiceImpl implements OfflinePushService {
 
     @Autowired
     private NettyServer nettyServer;
+    @Autowired
+    private WebSocketServer webSocketServer;
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+
+
 
     public void pushOfflineMsg(int userId)  {
         LOGGER.info("start offline msg push");
@@ -25,7 +37,10 @@ public class OfflinePushServiceImpl implements OfflinePushService {
         List<String> offlineMessage= OfflinePushDB.getOfflineMSG(userId);
         try{
             for (String msg:offlineMessage){
-                nettyServer.sendMsg(userId,msg);
+                if (ChannelUtil.getChannel(userId)!=null)
+                    nettyServer.sendMsg(userId,msg);
+                else
+                    webSocketServer.sendMsg(userId,msg);
                 pushCount++;
             }
         }catch (Exception e){
@@ -43,7 +58,10 @@ public class OfflinePushServiceImpl implements OfflinePushService {
         try{
             for (String msg:offlineMessage){
                 DataPackage dataPackage=JSONObject.parseObject(msg,DataPackage.class);
-                nettyServer.sendMsg(userId,dataPackage);
+                if (ChannelUtil.getChannel(userId)!=null)
+                    nettyServer.sendMsg(userId,dataPackage);
+                else
+                    webSocketServer.sendMsg(userId,dataPackage);
                 pushCount++;
             }
         }catch (Exception e){
@@ -56,6 +74,9 @@ public class OfflinePushServiceImpl implements OfflinePushService {
 
     @Override
     public void process(int userId) {
+        if (isVirtual(userId)){
+            return;  //虚拟用户不推未读消息
+        }
         if (OfflinePushDB.checkOfflineMsg(userId)){
             this.pushOfflineMsg(userId);
         }
@@ -73,5 +94,14 @@ public class OfflinePushServiceImpl implements OfflinePushService {
     public void saveOfflinePushMSG(int userId, DataPackage dataPackage) {
         String offlinePush= JSONObject.toJSONString(dataPackage);
         OfflinePushDB.saveOfflinePushMSG(userId,offlinePush);
+    }
+
+    /**
+     * 判断是不是虚拟用户
+     * @param userId
+     * @return
+     */
+    public boolean isVirtual(int userId){
+        return userInfoMapper.getUsersByUserType(Constant.VIRTUAL_USER).contains(userId);
     }
 }

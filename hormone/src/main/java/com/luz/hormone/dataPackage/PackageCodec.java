@@ -1,8 +1,15 @@
 package com.luz.hormone.dataPackage;
 
+import com.luz.hormone.handler.MyDataHandler;
+import com.luz.hormone.handler.MyWebSocketHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.springframework.core.codec.ByteBufferEncoder;
 
 import java.util.List;
@@ -12,14 +19,18 @@ public class PackageCodec extends ByteToMessageCodec {
     private  final int CHECK_HEADER=16;
 
     private  final int OFFSET_SIZE=8;
+    /** 默认暗号长度为23 */
+    private static final int MAX_LENGTH = 23;
+    /** WebSocket握手的协议前缀 */
+    private static final String WEBSOCKET_PREFIX = "GET /";
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object o, ByteBuf byteBuf) throws Exception {
         DataPackage dataPackage=(DataPackage)o;
         byteBuf.writeInt(DataPackage.getPackageHeader());
         byteBuf.writeInt(dataPackage.getDataLength());
-        byteBuf.writeInt(dataPackage.getCommand());
+        byteBuf.writeInt(dataPackage.getCmd());
         byteBuf.writeInt(dataPackage.getCode());
-        byteBuf.writeBytes(dataPackage.getData());
+        byteBuf.writeBytes(dataPackage.getData().getBytes());
     }
 
     @Override
@@ -41,8 +52,8 @@ public class PackageCodec extends ByteToMessageCodec {
         }
         byte data[]=new byte[dataLength];
         byteBuf.readBytes(data);
-        DataPackage o=new DataPackage(dataLength,data);
-        o.setCommand(command);
+        DataPackage o=new DataPackage(dataLength,new String(data));
+        o.setCmd(command);
         o.setCode(code);
         list.add(o);
     }

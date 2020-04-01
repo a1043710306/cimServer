@@ -9,6 +9,8 @@ spring:
 mybatis:
   mapper-locations: classpath:mapping/*.xml
   type-aliases-package: com.luz.hormone.model
+  #configuration:
+   #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging:
   config: classpath:logback-spring.xml
@@ -18,9 +20,10 @@ logging:
       example:
         mapper: debug
 server:
-  port: 8081
+  port: 8383
 mynetty:
-  port: 8889
+  webSocketPort: 8182
+  port: 8181
   heart: 10
 
 defaultRedis: 127.0.0.1:6379
@@ -35,5 +38,5 @@ async:
       keep_alive_seconds : 300
 
 route:
-  port: 8088
+  port: 8989
   url: 127.0.0.1

@@ -11,6 +11,7 @@ public class MessageListEntity implements Serializable {
     private String msg;
     private int msgType;
     private int time;
+    private int device;
     public int getCircleId() {
         return circleId;
     }
@@ -73,5 +74,13 @@ public class MessageListEntity implements Serializable {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    public int getDevice() {
+        return device;
+    }
+
+    public void setDevice(int device) {
+        this.device = device;
     }
 }

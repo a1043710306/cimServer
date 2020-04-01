@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luz.hormone.dao.UserInfoMapper">
+    <resultMap id="BaseResultMap" type="com.luz.hormone.model.UserModel">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="headpic_json" jdbcType="VARCHAR" property="headpicJson"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="marriage_state" jdbcType="INTEGER" property="marriageState"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="birthday" jdbcType="INTEGER" property="birthday"/>
+        <result column="constella" jdbcType="INTEGER" property="constella"/>
+        <result column="tag_id" jdbcType="VARCHAR" property="tagId"/>
+        <result column="desc" jdbcType="VARCHAR" property="desc"/>
+        <result column="interest_id" jdbcType="VARCHAR" property="interestId"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+        <result column="area_id" jdbcType="INTEGER" property="area_id"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="city_id" jdbcType="INTEGER" property="cityId"/>
+        <result column="create_time" jdbcType="INTEGER" property="createTime"/>
+        <result column="update_time" jdbcType="INTEGER" property="updateTime"/>
+        <result column="user_type" jdbcType="INTEGER" property="userType"/>
+        <result column="user_status" jdbcType="INTEGER" property="userStatus"/>
+        <result column="product_id" jdbcType="VARCHAR" property="productId"/>
+        <result column="app_lan" jdbcType="VARCHAR" property="appLan"/>
+    </resultMap>
+
+    <select id="getUsersByUserType" resultType="Integer">
+        select user_id from g_user_info where user_type=#{userType}
+    </select>
+
+    <select id="getUserInfoByUserId" resultMap="BaseResultMap">
+        select *from g_user_info where user_id=#{userId}
+    </select>
+</mapper>

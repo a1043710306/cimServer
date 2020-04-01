@@ -7,9 +7,11 @@ import com.luz.hormone.utils.ChannelUtil;
 import com.luz.hormone.utils.NettyAttrUtil;
 import com.luz.hormone.utils.SpringUtils;
 import com.luz.hormone.dataPackage.DataPackage;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +28,9 @@ public class MyDataHandler extends  SimpleChannelInboundHandler<DataPackage> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, DataPackage data) throws Exception {
-        //log.info(new String(s.getData()));
+        log.info(data.toString());
         ServerHeartBeatHandler serverHeartBeatHandler=SpringUtils.getObject(ServerHeartBeatHandler.class);
-        switch (data.getCommand()) {
+        switch (data.getCmd()) {
             case Constant.CONNENT: {
               int userId = Integer.valueOf(new String(data.getData()));
               ChannelUtil.put(userId, channelHandlerContext);
@@ -44,11 +46,11 @@ public class MyDataHandler extends  SimpleChannelInboundHandler<DataPackage> {
             break;
             // 响应心跳包
             case  Constant.PING : {
-              log.info("resp ping " + channelHandlerContext.channel().remoteAddress());
+              log.debug("resp ping " + channelHandlerContext.channel().remoteAddress());
               DataPackage dataPackage =
                   new DataPackage(
-                      Constant.Resp_OK_MESSAGE.length(), Constant.Resp_OK_MESSAGE.getBytes());
-              dataPackage.setCommand(Constant.PING);
+                      Constant.Resp_OK_MESSAGE.length(), Constant.Resp_OK_MESSAGE);
+              dataPackage.setCmd(Constant.PING);
               dataPackage.setCode(Constant.RESP_OK);
               // 更新心跳时间
               NettyAttrUtil.saveHeart(channelHandlerContext, serverHeartBeatHandler.getHeart());
@@ -67,14 +69,18 @@ public class MyDataHandler extends  SimpleChannelInboundHandler<DataPackage> {
                 int userId = Integer.valueOf(new String(data.getData()));
                 ChannelUtil.removeChannelInfo(userId);
                 userConfigService.delRoute(userId);
+                channelHandlerContext.close();
                 log.info("userId "+userId+" offline");
             }
         }
+
     }
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        log.info(ctx.channel().remoteAddress()+" is online");
-        // NOOP
+    }
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!", CharsetUtil.UTF_8));
     }
 
     @Override
@@ -91,18 +97,21 @@ public class MyDataHandler extends  SimpleChannelInboundHandler<DataPackage> {
         if (evt instanceof IdleStateEvent){
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
             if (idleStateEvent.state()== IdleState.READER_IDLE){
-                log.info("开始心跳检测");
+                log.info("client 开始心跳检测");
                 ServerHeartBeatHandler serverHeartBeatHandler=SpringUtils.getObject(ServerHeartBeatHandler.class);
                 serverHeartBeatHandler.process(ctx);
             }
         }
-        super.userEventTriggered(ctx, evt);
+        //调用另一个心跳检测器
+        //super.userEventTriggered(ctx, evt);
     }
-    /*@Override
+
+
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        int userId=ChannelUtil.getUserId(ctx);
-        userConfigService.delRoute(userId);
+        //int userId=ChannelUtil.getUserId(ctx);
+        //userConfigService.delRoute(userId);
+        ChannelUtil.removeChannelInfo(ctx);
         ctx.fireExceptionCaught(cause);
-    }*/
+    }
 
 }

@@ -30,7 +30,7 @@ public class OfflinePushDB {
      * @param msg
      */
     public static void saveOfflineMSG(int userId,String msg){
-        LOGGER.debug("save offline msg to redis:{"+userId+"}");
+        LOGGER.info("save offline msg to redis:{"+userId+"}");
         String key= Constant.OFFLINE_MSG_INDEX+userId;
         jedisCluster.lpush(key,msg);
         jedisCluster.expire(key,Constant.OFFLINE_MSG_ATTR_DAY*30);
@@ -62,7 +62,7 @@ public class OfflinePushDB {
             message=jedisCluster.lpop(key);
             //message=jedis.lpop(key);
         }
-        LOGGER.debug("get offline msg to redis:{"+userId+"}  msg count "+offlineMessages.size());
+        LOGGER.info("get offline msg to redis:{"+userId+"}  msg count "+offlineMessages.size());
         //删除队列
         jedisCluster.del(key);
         //jedis.del(key);
@@ -75,7 +75,7 @@ public class OfflinePushDB {
      * @param msg
      */
     public static void saveOfflinePushMSG(int userId,String msg){
-        LOGGER.debug("save offline msg to redis:{"+userId+"}");
+        LOGGER.info("save offline msg to redis:{"+userId+"}");
         String key= Constant.OFFLINE_PUSH_MSG_INDEX+userId;
         jedisCluster.lpush(key,msg);
         jedisCluster.expire(key,Constant.OFFLINE_MSG_ATTR_DAY*30);
@@ -106,7 +106,7 @@ public class OfflinePushDB {
             message=jedisCluster.lpop(key);
             //message=jedis.lpop(key);
         }
-        LOGGER.debug("get offline msg to redis:{"+userId+"}  msg count "+offlineMessages.size());
+        LOGGER.info("get offline msg to redis:{"+userId+"}  msg count "+offlineMessages.size());
         //删除队列
         jedisCluster.del(key);
         //jedis.del(key);

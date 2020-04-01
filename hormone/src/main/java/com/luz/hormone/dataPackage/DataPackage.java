@@ -2,20 +2,22 @@ package com.luz.hormone.dataPackage;
 
 import com.alibaba.fastjson.JSONObject;
 
-public class DataPackage {
+import java.io.Serializable;
+
+public class DataPackage implements Serializable {
     //Package header
-    private static final int PACKAGE_HEADER=0xCCCCCCCC;
+    private static int Header=0xCCCCCCCC;
     private int dataLength;
-    private int command;
+    private int cmd;
     private int code;
-    private byte data[];
-    public DataPackage(int dataLength,byte[] data){
+    private String data;
+    public DataPackage(int dataLength,String data){
         this.data=data;
         this.dataLength=dataLength;
     }
 
-    public static int getPackageHeader() {
-        return PACKAGE_HEADER;
+    public static  int getPackageHeader() {
+        return Header;
     }
 
     public int getDataLength() {
@@ -26,20 +28,20 @@ public class DataPackage {
         this.dataLength = dataLength;
     }
 
-    public byte[] getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(byte[] data) {
+    public void setData(String data) {
         this.data = data;
     }
 
-    public int getCommand() {
-        return command;
+    public int getCmd() {
+        return cmd;
     }
 
-    public void setCommand(int command) {
-        this.command = command;
+    public void setCmd(int cmd) {
+        this.cmd = cmd;
     }
 
     public int getCode() {
@@ -50,10 +52,4 @@ public class DataPackage {
         this.code = code;
     }
 
-    public String toString(){
-        return "{ \n\"dataLength\":"+this.dataLength+","+
-                "\"command\":"+this.command+","+
-                "\"code\":"+this.code+","+
-                "\"data\":"+ new String(this.data) +"\n}";
-    }
 }

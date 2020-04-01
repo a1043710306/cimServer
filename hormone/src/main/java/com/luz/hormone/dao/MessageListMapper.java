@@ -12,8 +12,9 @@ public interface MessageListMapper {
     public List<MessageListModel> getHistory(@Param("userId") int userId, @Param("firendId")int firendId,
                                              @Param("startTime") int startTime, @Param("endTime") int endTime);
 
-    public List<MessageListModel> getHistoryByUserIdAndCircleId(@Param("userId") int userId,@Param("circleId")int circleId,
+    public List<MessageListModel> getHistoryByUserIdAndCircleId(@Param("circleId")int circleId,
                                                                 @Param("startTime") int startTime, @Param("endTime") int endTime);
 
     public void insert(MessageListModel messageListModel);
+    public List<MessageListModel> getHistoryNotByTime(@Param("userId") int userId, @Param("firendId")int firendId);
 }

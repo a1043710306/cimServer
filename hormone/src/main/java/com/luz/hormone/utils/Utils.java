@@ -7,6 +7,9 @@ import com.luz.hormone.model.MessageListModel;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class Utils {
     public static void processUserId(HistoryMessageEntity historyMessageEntity,
@@ -15,6 +18,7 @@ public class Utils {
             try{
                 historyMessageEntity.setIsSelf(1);
                 historyMessageEntity.setUserId(messageListModel.getUserId());
+                historyMessageEntity.setFriendUserId(messageListModel.getFriendUserId());
                 historyMessageEntity.setMsg(URLDecoder.decode(messageListModel.getMsg(),"utf-8"));
                 historyMessageEntity.setMsgType(messageListModel.getMsgType());
                 historyMessageEntity.setCreateTime(messageListModel.getCreateTime());
@@ -24,12 +28,13 @@ public class Utils {
         }else {
             try{
                 historyMessageEntity.setIsSelf(0);
+                historyMessageEntity.setFriendUserId(messageListModel.getFriendUserId());
                 historyMessageEntity.setUserId(messageListModel.getFriendUserId());
                 historyMessageEntity.setMsg(URLDecoder.decode(messageListModel.getMsg(),"utf-8"));
                 historyMessageEntity.setMsgType(messageListModel.getMsgType());
                 historyMessageEntity.setCreateTime(messageListModel.getCreateTime());
             }catch (Exception e){
-                return ;
+                return;
             }
         }
     }
@@ -77,8 +82,24 @@ public class Utils {
         serverMessagePush.setCircleId(messageListModel.getCircleId());
         serverMessagePush.setCreateTime(messageListModel.getCreateTime());
         serverMessagePush.setMsg(messageListModel.getMsg());
-        serverMessagePush.setUserId(userId);
+        serverMessagePush.setUserId(messageListModel.getFriendUserId());
+        serverMessagePush.setIsSelf(0);
+        serverMessagePush.setFriendId(userId);
         serverMessagePush.setMsgType(messageListModel.getMsgType());
         return serverMessagePush;
+    }
+
+    public static String ProcessingParameterSpecialCharacters(String args){
+        return args.substring(1,args.length()-1);
+    }
+
+    public static List<HistoryMessageEntity> sort( List<HistoryMessageEntity> messageEntities){
+        Collections.sort(messageEntities, new Comparator<HistoryMessageEntity>() {
+            @Override
+            public int compare(HistoryMessageEntity o1, HistoryMessageEntity o2) {
+                return o1.getCreateTime()-o2.getCreateTime();
+            }
+        });
+        return messageEntities;
     }
 }

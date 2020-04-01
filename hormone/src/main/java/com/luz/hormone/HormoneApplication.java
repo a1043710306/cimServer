@@ -1,7 +1,6 @@
 package com.luz.hormone;
 
-import com.luz.hormone.netty.NettyServer;
-import com.luz.hormone.utils.IpUtils;
+
 import com.luz.hormone.utils.SpringUtils;
 import com.luz.hormone.zookeeper.RegZk;
 import com.luz.hormone.zookeeper.ZkServicer;
@@ -12,9 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+
 
 import java.net.InetAddress;
 
@@ -42,7 +39,6 @@ public class HormoneApplication  implements CommandLineRunner{
         thread.setName("registry-zk");
         thread.start() ;
         LOGGER.info("zk start ok");
-
     }
 
 }

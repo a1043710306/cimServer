@@ -13,6 +13,7 @@ public class Constant {
     public static final String USER_ROUTE_INDEX="route_";
     public static final int  TIME_SLOT=60*60*24;
     public static final String OFFLINE_PUSH_MSG_INDEX="offline_push_msg_";
+    public static final int VIRTUAL_USER=1;
 
     public static final int USER_EXIT=0X00;
 
@@ -24,5 +25,7 @@ public class Constant {
         public static final int SEND=1;
         public static final int HISTORY=2;
         public static final int PUSH=3;
+        public static final int MESSAGE_LIST=5; //获取消息列表
+        public static final int DEL_MESSAGE_LIST=6;
     }
 }

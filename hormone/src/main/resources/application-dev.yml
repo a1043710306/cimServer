@@ -23,5 +23,5 @@ logging:
 
 zk:
   root: /route
-  connection: 127.0.0.1:2181
+  connection: 192.168.1.15:2181
   iszk: true

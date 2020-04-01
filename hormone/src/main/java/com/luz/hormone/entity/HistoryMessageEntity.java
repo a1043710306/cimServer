@@ -9,6 +9,15 @@ public class HistoryMessageEntity implements Serializable {
     private String msg;
     private int msgType;
     private int createTime;
+    private int friendUserId;
+
+    public int getFriendUserId() {
+        return friendUserId;
+    }
+
+    public void setFriendUserId(int friendUserId) {
+        this.friendUserId = friendUserId;
+    }
 
     public int getCircleId() {
         return circleId;

@@ -17,7 +17,6 @@ public class NettyAttrUtil {
     static {
         JedisClusterConfig jedisClusterConfig=SpringUtils.getObject(JedisClusterConfig.class);
         jedisCluster=jedisClusterConfig.getJedisCluster();
-        //jedis=jedisClusterConfig.getDefRedis();
     }
 
     /**
@@ -43,7 +42,6 @@ public class NettyAttrUtil {
     public static boolean checkHeart(ChannelHandlerContext channel){
         String key=ATTR_KEY_HEART+channel.channel().id();
         if (jedisCluster.exists(key)){
-        //if (jedis.exists(key)){
             return true;
         }
         return false;

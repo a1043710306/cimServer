@@ -1,6 +1,6 @@
 
 server:
-  port: 8088
+  port: 8989
 
 spring:
   datasource:
@@ -26,7 +26,8 @@ zk:
 mybatis:
   mapper-locations: classpath:mapping/*.xml
   type-aliases-package: com.luz.route.entity
-
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 logging:
   config: classpath:logback-spring.xml
   path: .\logs
