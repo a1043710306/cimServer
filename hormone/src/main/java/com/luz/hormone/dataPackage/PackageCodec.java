@@ -18,11 +18,6 @@ public class PackageCodec extends ByteToMessageCodec {
 
     private  final int CHECK_HEADER=16;
 
-    private  final int OFFSET_SIZE=8;
-    /** 默认暗号长度为23 */
-    private static final int MAX_LENGTH = 23;
-    /** WebSocket握手的协议前缀 */
-    private static final String WEBSOCKET_PREFIX = "GET /";
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object o, ByteBuf byteBuf) throws Exception {
         DataPackage dataPackage=(DataPackage)o;

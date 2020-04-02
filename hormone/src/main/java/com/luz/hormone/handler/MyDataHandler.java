@@ -14,6 +14,9 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @ChannelHandler.Sharable
 public class MyDataHandler extends  SimpleChannelInboundHandler<DataPackage> {

@@ -16,14 +16,14 @@
             select id,type,msg,circle_id,user_id,create_time,msg_type,firend_id from g_message_list
             where (user_id=#{userId} OR firend_id=#{userId} ) AND
              (user_id=#{firendId} OR firend_id=#{firendId} )  and create_time>#{startTime} and
-            create_time<#{endTime} and circle_id=0 order by id
+            create_time<#{endTime} and circle_id=0 and type!=3 order by id
             ]]>
     </select>
     <select id="getHistoryNotByTime" resultMap="BaseResultMap">
         <![CDATA[
             select id,type,msg,circle_id,user_id,create_time,msg_type,firend_id from g_message_list
             where (user_id=#{userId} OR firend_id=#{userId} ) AND
-             (user_id=#{firendId} OR firend_id=#{firendId} )  and circle_id=0 order by id
+             (user_id=#{firendId} OR firend_id=#{firendId} ) and type!=3and circle_id=0 order by id
             ]]>
     </select>
     <select id="getHistoryByUserIdAndCircleId" resultMap="BaseResultMap">

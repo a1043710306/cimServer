@@ -14,12 +14,14 @@ public class Constant {
     public static final int  TIME_SLOT=60*60*24;
     public static final String OFFLINE_PUSH_MSG_INDEX="offline_push_msg_";
     public static final int VIRTUAL_USER=1;
+    public static final String USER_CHAT_STATUS_="SOCKET_USER_CHAT_STATUS_";
 
     public static final int USER_EXIT=0X00;
 
     public static class CHAT{
         public static final int CHAT_GROUP=1;
         public static final int CHAT_SOLO=2;
+        public static final int CHAT_WHISPER=3;
     }
     public static class METHOD{
         public static final int SEND=1;

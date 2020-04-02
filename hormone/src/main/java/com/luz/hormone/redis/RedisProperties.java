@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 /**
  * @Author:
  * @Description:读取redis配置信息并装载
- * @Date: Create in  2018/6/14 16:16
+ * @Date: Create in  2020/3/31 16:16
  */
 @Component
 @ConfigurationProperties(prefix = "spring.redis.cache")

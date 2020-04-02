@@ -2,10 +2,7 @@ package com.luz.hormone.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.luz.hormone.constant.Constant;
-import com.luz.hormone.dao.MessageListMapper;
-import com.luz.hormone.dao.OfflinePushDB;
-import com.luz.hormone.dao.SessionListMapper;
-import com.luz.hormone.dao.UserInfoMapper;
+import com.luz.hormone.dao.*;
 import com.luz.hormone.dataPackage.DataPackage;
 import com.luz.hormone.entity.*;
 import com.luz.hormone.model.MessageListModel;
@@ -52,7 +49,6 @@ public class MessageListServiceImpl implements MessageListService {
     public DataPackage process(DataPackage dataPackage) {
         switch(dataPackage.getCode()){
             case Constant.METHOD.SEND:{
-
                 MessageListEntity messageListEntity=JSONObject.parseObject(new String(dataPackage.getData()),MessageListEntity.class);
                 LOGGER.info("Send Sevice start params: "+JSONObject.toJSONString(dataPackage));
                 String data=this.sendMessage(messageListEntity);
@@ -62,7 +58,6 @@ public class MessageListServiceImpl implements MessageListService {
             }
             break;
             case Constant.METHOD.HISTORY:{
-                //dataPackage.setData(Utils.ProcessingParameterSpecialCharacters(dataPackage.getData()));
                 MessageListEntity messageListEntity=JSONObject.parseObject(dataPackage.getData(),MessageListEntity.class);
                 String data=this.getHistory(messageListEntity);
                 dataPackage.setDataLength(data.getBytes().length);
@@ -89,6 +84,7 @@ public class MessageListServiceImpl implements MessageListService {
             break;
             case Constant.METHOD.HISTORY:{
                 MessageListEntity messageListEntity=JSONObject.parseObject(dataPackage.getData(),MessageListEntity.class);
+                ChatStatus.saveStatus(messageListEntity.getUserId(),messageListEntity.getFriendUserId());
                 LOGGER.info("Send Sevice start params: "+JSONObject.toJSONString(dataPackage));
                 String data=getVirHistory(messageListEntity);
                 dataPackage.setDataLength(data.length());
@@ -178,26 +174,25 @@ public class MessageListServiceImpl implements MessageListService {
         return sessionListEntity;
     }
 
-
-
     @Override
     public String sendMessage(MessageListEntity messageListEntity) {
         int friendId=messageListEntity.getFriendUserId();
         int userId=messageListEntity.getUserId();
         Map<String,Object> resp=new HashMap<>();
         //私聊
-        if (Constant.CHAT.CHAT_SOLO==messageListEntity.getType()){
+        if (Constant.CHAT.CHAT_SOLO==messageListEntity.getType()||Constant.CHAT.CHAT_WHISPER==messageListEntity.getType()){
             MessageListModel messageListModel=Utils.getMessageModel(messageListEntity);
             this.saveMessage(messageListModel);
             ServerMessagePush serverMessagePush=Utils.getServerMessagePush(messageListModel,userId);
             String msg=JSONObject.toJSONString(serverMessagePush);
-            this.sendByUserId(msg,friendId);
+            this.sendByUserId(msg,userId,friendId);
             this.CheckAndInsertSession(userId,friendId);
             resp.put("code",Integer.valueOf(200));
             resp.put("msg","ok");
             resp.put("createTime",Integer.valueOf(serverMessagePush.getCreateTime()));
 
         }else {
+
             //群聊扩展
         }
         return JSONObject.toJSONString(resp);
@@ -206,23 +201,28 @@ public class MessageListServiceImpl implements MessageListService {
     /**
      *
      */
-    private void sendByUserId(String msg,int userId){
+    private void sendByUserId(String msg,int userId,int friendId){
         final String url="http://"+routeUrl+":"+routePort+"/sendMsg";
         try{
-            if(ChannelUtil.getChannel(userId)!=null) {
-                nettyServer.sendMsg(userId, msg);
+            if(ChannelUtil.getChannel(friendId)!=null) {
+                nettyServer.sendMsg(friendId, msg);
             }else {
-                webSocketServer.sendMsg(userId,msg);
+                //web聊天需要特殊处理
+                if (ChatStatus.isStatus(friendId)&&ChatStatus.getStatus(friendId)==userId){
+                        webSocketServer.sendMsg(friendId, msg);
+                 } else {
+                    OfflinePushDB.saveOfflineMSG(friendId,msg);
+                 }
             }
         }catch (Exception e){
             //抛异常 将消息抛给路由处理
-            LOGGER.warn("relay the message : "+userId+" :"+msg);
+            LOGGER.warn("relay the message : "+friendId+" :"+msg);
       threadPoolConfig.asyncExecutor()
           .execute(
               new Runnable() {
                 @Override
                 public void run() {
-                  SendMessageUtils.sendMsgToRoute(url,userId,msg);
+                  SendMessageUtils.sendMsgToRoute(url,friendId,msg);
                 }
               });
         }

@@ -5,7 +5,6 @@ import com.luz.hormone.constant.Constant;
 import com.luz.hormone.dao.OfflinePushDB;
 import com.luz.hormone.dao.UserInfoMapper;
 import com.luz.hormone.dataPackage.DataPackage;
-import com.luz.hormone.model.UserModel;
 import com.luz.hormone.netty.NettyServer;
 import com.luz.hormone.netty.WebSocketServer;
 import com.luz.hormone.service.OfflinePushService;
@@ -16,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
+
 
 @Service
 public class OfflinePushServiceImpl implements OfflinePushService {
