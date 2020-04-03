@@ -1,1 +1,0 @@
-2020-03-19 15:45:44.847 [main] WARN  org.mybatis.spring.mapper.ClassPathMapperScanner - No MyBatis mapper was found in '[com.luz.route.dao]' package. Please check your configuration.
